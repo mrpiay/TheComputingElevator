@@ -217,18 +217,17 @@
 				and indicates the next instruction floor where the elevator will stop.
 			</li>
  			<li>
-				In addition to <strong>direct addressing</strong> mode, where instructions directly reference 
-				a specific data floor, <strong>indexed addressing</strong> is also supported. 
-				Instructions in the format <strong>7X</strong> perform the same operation as instructions 
+				In addition to <strong>direct addressing</strong> mode, where instructions directly reference
+				a specific data floor, <strong>indexed addressing</strong> is also supported.
+				Instructions in the format <strong>7X</strong> perform the same operation as instructions
 				in the format <strong>0X</strong>, but the data floor is calculated as <strong>X + Data[0]</strong>.
-				If data floor 0 (the <strong>index register</strong>) is 0 or empty, the instruction <strong>7X</strong> behaves as instruction <strong>7</strong> 
-				(see Example 11).
+				Data floor 0 acts as the <strong>index register</strong> (see Example 11).
 			</li>
 		</ul>
 		<p>
-			The Computing Elevator supports instructions encoded with one or two denary digits, as defined in its <strong>Instruction Set</strong>, 
-			emulating a machine code programming language. With only 10 instruction and data floors available by default, 
-			it encourages users to get creative, designing their own problems and solving them efficiently, like generating 
+			The Computing Elevator supports instructions encoded with two denary digits, as defined in its <strong>Instruction Set</strong>,
+			emulating a machine code programming language. With only 10 instruction and data floors available by default,
+			it encourages users to get creative, designing their own problems and solving them efficiently, like generating
 			a full Fibonacci sequence in just 9 instructions (see Example 10).<p>
 		</p>
 		<p>
@@ -346,14 +345,19 @@
 				</thead>
 				<tbody>
 					<tr>
-						<td>7</td>
+						<td>80</td>
 						<td>ACC &larr; INPUT</td>
 						<td>Copy the value entered by the user into the elevator</td>
 					</tr>
 					<tr>
-						<td>8</td>
+						<td>81</td>
 						<td>OUTPUT &larr; ACC</td>
 						<td>Copy the value from the elevator into the output</td>
+					</tr>
+					<tr>
+						<td>82</td>
+						<td>STOP</td>
+						<td>Stop the program</td>
 					</tr>
 				</tbody>
 			</table>
@@ -367,11 +371,6 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td>9</td>
-						<td>STOP</td> 
-						<td>Stop the program</td>
-					</tr>
 					<tr>
 						<td>9X</td>
 						<td>SET PAGE TO X</td>
@@ -410,67 +409,67 @@
 		const examples = {
 			example1: {
 				name: "Example 1",
-				instructions: ['8', '10', '40'],
+				instructions: ['81', '10', '40'],
 				data: ['1'],
 				description: "OUTPUT = 0, 1, 2, 3, ..."
 			},
 			example2: {
 				name: "Example 2",
-				instructions: ['8', '10', '30', '40'],
+				instructions: ['81', '10', '30', '40'],
 				data: ['2'],
 				description: "OUTPUT = 0, 2, 4, 8, ..."
 			},
 			example3: {
 				name: "Example 3",
-				instructions: ['00', '8', '21', '65', '41', '9'],
+				instructions: ['00', '81', '21', '65', '41', '82'],
 				data: ['9', '1'],
 				description: "OUTPUT = 9, 8, ... , 0"
 			},
 			example4: {
 				name: "Example 4",
-				instructions: ['7', '54', '00', '45', '01', '8', '40'],
+				instructions: ['80', '54', '00', '45', '01', '81', '40'],
 				data: ['0', '1'],
 				description: "OUTPUT = NOT INPUT"
 			},
 			example5: {
 				name: "Example 5",
-				instructions: ['7', '53', '7', '8', '9'],
+				instructions: ['80', '53', '80', '81', '82'],
 				data: [],
 				description: "OUTPUT = first INPUT AND second INPUT"
 			},
 			example6: {
 				name: "Example 6",
-				instructions: ['7', '53', '44', '7', '8', '9'],
+				instructions: ['80', '53', '44', '80', '81', '82'],
 				data: [],
 				description: "OUTPUT = first INPUT OR second INPUT"
 			},
 			example7: {
 				name: "Example 7",
-				instructions: ['7', '39', '7', '38', '09', '28', '8', '9'],
+				instructions: ['80', '39', '80', '38', '09', '28', '81', '82'],
 				data: [],
 				description: "OUTPUT = first INPUT - second INPUT"
 			},
 			example8: {
 				name: "Example 8",
-				instructions: ['01', '58', '23', '31', '02', '10', '32', '40', '9'],
+				instructions: ['01', '58', '23', '31', '02', '10', '32', '40', '82'],
 				data: ['7', '5', '0', '1'],
 				description: "D[2] = 7 × 5"
 			},
 			example9: {
 				name: "Example 9",
-				instructions: ['00', '21', '68', '30', '02', '13', '32', '40', '9'],
+				instructions: ['00', '21', '68', '30', '02', '13', '32', '40', '82'],
 				data: ['10', '3', '0', '1'],
 				description: "10 =  3 × D[2] + D[0]"
 			},
 			example10: {
 				name: "Example 10",
-				instructions: ['00', '8', '01', '32', '10', '31', '02', '30', '40'],
+				instructions: ['00', '81', '01', '32', '10', '31', '02', '30', '40'],
 				data: ['0', '1'],
 				description: "OUTPUT = Fibonacci sequence"
 			},
 			example11: {
 				name: "Example 11",
-				instructions: ['71', '8', '00', '18', '30', '27', '58', '40', '9'],
+				instructions: ['71', '81', '00', '18', '30', '27', '58', '40', '82'],
 				data: ['0', '5', '4', '3', '2', '1', '0', '6', '1'],
 				description: "OUTPUT = D[1] to D[6] using indexed addressing"
 			},
@@ -482,7 +481,7 @@
 			},
 			example13: {
 				name: "Example 13",
-				instructions: ['7', '30', '00', '21', '91', '65', '90', '30', '02', '13','32', '01', '14', '31', '42', '9'],
+				instructions: ['80', '30', '00', '21', '91', '65', '90', '30', '02', '13','32', '01', '14', '31', '42', '82'],
 				data: ['', '1', '0', '1', '2'],
 				description: "INPUT = D[2]^2 + D[0]"
 			},
@@ -813,9 +812,9 @@
 			document.getElementById('output').value = `OUTPUTS:\n${outputList}`;
 		}
 
-		// Check if an input is valid
+		// Check if an input is valid (only 0 or 1)
 		function isValidInput(value) {
-			return (/^\d+$/.test(value));
+			return (/^[01]$/.test(value));
 		}
 		
 		// Execute program
@@ -829,10 +828,10 @@
 				const val = inputInsElements[i].value;
 				if (
 					val === '' ||
-					/^[8]$/.test(val) ||
-					/^7[0-9]?$/.test(val) ||
-					/^9[0-9]?$/.test(val) ||
-					/^[0-6][0-9]$/.test(val)
+					/^[0-6][0-9]$/.test(val) ||
+					/^7[0-9]$/.test(val) ||
+					/^8[0-2]$/.test(val) ||
+					/^9[0-9]$/.test(val)
 				) continue;
 				else {
 					alert(`Invalid instruction on floor ${i}.`);
@@ -948,13 +947,34 @@
 						// Stop elevator for a while
 						await new Promise(resolve => setTimeout(resolve, speedStop[indexSpeed])); // Wait before next instruction
 						break;
-					case '7': // INP or LDX
-						let userInput;
-						// If instructon is '7'
-						if (instr.length === 1) {
+					case '7': // LDX (indexed addressing)
+						// Effective address (indexed addressing mode)
+						operand = (operand + parseInt(inputDatElements[0].value)) % size;
+						const dataInputIdx = inputDatElements[operand];
+						// Send elevator to data floor
+						await moveElevator(operand + 1, "dat");
+						// Check data value is valid
+						if (!dataInputIdx || dataInputIdx.value === '' || isNaN(dataInputIdx.value)) {
+							alert(`Data at floor ${operand} is not a valid number.`);
+							finalizeRun();
+							return;
+						}
+
+						let dataValueIdx = parseInt(dataInputIdx.value, 10);
+						// Stop elevator for a while
+						await new Promise(resolve => setTimeout(resolve, speedStop[indexSpeed]));
+						// Update elevator
+						elevator = dataValueIdx;
+						// Update elevator content
+						updateElevator(operand + 1);
+						break;
+					case '8': // INPUT (80), OUTPUT (81), HALT (82)
+						if (instr === '80') {
+							// INPUT
+							let userInput;
 							// Repeat input until a number is entered
 							do {
-								userInput = prompt("Enter a positive integer number:");
+								userInput = prompt("Enter 0 or 1:");
 								// If user cancelled
 								if (userInput === null) {
 									finalizeRun();
@@ -973,52 +993,25 @@
 							updateElevator(0);
 							// Update input and output displays
 							update();
-							break;
-						}
-						// If instructon is '7X'
-						else {
-							// Effective address (indexed addressing mode)
-							operand = (operand + parseInt(inputDatElements[0].value)) % size;
-							const dataInput = inputDatElements[operand];
-							// Send elevator to data floor
-							await moveElevator(operand + 1, "dat");
-							// Check data value is valid
-							if (!dataInput || dataInput.value === '' || isNaN(dataInput.value)) {
-								alert(`Data at floor ${operand} is not a valid number.`);
-								finalizeRun();
-								return;
-							}
-
-							let dataValue = parseInt(dataInput.value, 10);
+						} else if (instr === '81') {
+							// OUTPUT
+							// Add elevator to list of outputs
+							output.push(elevator);
+							// Send elevator to output floor
+							await moveElevator(0, "dat");
 							// Stop elevator for a while
 							await new Promise(resolve => setTimeout(resolve, speedStop[indexSpeed]));
-							// Update elevator
-							elevator = dataValue;
-							// Update elevator content
-							updateElevator(operand + 1);
-							break;
-						}
-					case '8': // OUT
-						// Add elevator to list of outputs
-						output.push(elevator);
-						// Send elevator to output floor
-						await moveElevator(0, "dat");
-						// Stop elevator for a while
-						await new Promise(resolve => setTimeout(resolve, speedStop[indexSpeed]));
-						// Update input and output displays
-						update();
-						break;
-					case '9': // HLT or PAGE
-						// If instructon is '9'
-						if (instr.length === 1) {
+							// Update input and output displays
+							update();
+						} else if (instr === '82') {
+							// HALT
 							finalizeRun();
 							return;
 						}
-						// If instructon is '9X'
-						else {
-							page = parseInt(instr[1]);
-							break;
-						}
+						break;
+					case '9': // PAGE (9X)
+						page = parseInt(instr[1]);
+						break;
 					default:
 						alert(`Invalid instruction on floor ${pc}.`);
 						finalizeRun();
