@@ -56,11 +56,11 @@ All instructions are **two digits** long for consistency.
 |------|--------------|----------------------------------------------------------|
 | 80   | ACC ← INPUT  | Copy the value entered by the user into the elevator     |
 | 81   | OUTPUT ← ACC | Copy the value from the elevator into the output         |
-| 82   | STOP         | Stop the program                                         |
 
 ### Other
 
 | Code | Instruction   | Description      |
 |------|---------------|------------------|
+| 82   | STOP         | Stop the program  |
 | 9X   | SET PAGE TO X | Switch to page X |
 
