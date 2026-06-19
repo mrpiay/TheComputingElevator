@@ -224,12 +224,14 @@
 			border: 2px solid #c79100;
 			border-radius: 8px;
         }
-		/* Data floors keep numeric text inputs */
-        input {
-            width: 80%;
-            height: 60%;
+		/* Data floors keep numeric text inputs (scoped so it doesn't hit the
+		   control-panel checkbox or the instruction code boxes) */
+        #dataTower input {
+            width: 54px;
+            height: 30px;
             text-align: center;
-            font-size: 20px;
+            font-size: 16px;
+			font-family: 'Consolas', 'Courier New', monospace;
 			border: 1px solid var(--line);
 			border-radius: 6px;
         }
@@ -256,6 +258,32 @@
 		.op-jump { background: var(--jump-bg); border-color: var(--jump); }
 		.op-io   { background: var(--io-bg);   border-color: var(--io); }
 		.op-adv  { background: var(--adv-bg);  border-color: var(--adv); }
+		/* Alternate machine-code editor: one 2-digit box per instruction floor.
+		   Hidden by default; shown when the instructions tower is in code-mode
+		   (toggled from the control panel). Both editors share one program. */
+		.code-input {
+			display: none;
+			width: 54px;
+			height: 30px;
+			text-align: center;
+			font-size: 16px;
+			font-family: 'Consolas', 'Courier New', monospace;
+			border: 1px solid var(--line);
+			border-radius: 6px;
+		}
+		.code-input.invalid { border-color: #d33; background: #ffecec; }
+		#instructionsTower.code-mode .instr-controls { display: none; }
+		#instructionsTower.code-mode .code-input { display: inline-block; }
+		/* "Machine code" checkbox in the control panel */
+		.mode-toggle {
+			font-size: 14px;
+			color: #fff;
+			vertical-align: middle;
+			margin: 2px 8px;
+			cursor: pointer;
+			user-select: none;
+		}
+		.mode-toggle input { vertical-align: middle; margin-right: 4px; }
 		/* Instruction-set table category headers, colour-matched */
 		#instructionSet h3 { margin-top: 34px; margin-bottom: 10px; }
 		.cat-mem  { color: var(--mem);  border-left: 6px solid var(--mem);  padding-left: 8px; }
@@ -317,7 +345,7 @@
 	</div>
 
 	<!-- Live plain-English narration -->
-	<div id="narration" class="narration">Build a program with the dropdowns, then press <strong>STEP</strong> or <strong>RUN</strong>.</div>
+	<div id="narration" class="narration">Build a program with the dropdowns, then press <strong>NEXT &#9654;</strong> or <strong>RUN</strong>.</div>
 
     <!-- Buttons -->
     <div class="buttons">
@@ -325,6 +353,8 @@
             <option value="normalSpeed">Normal speed</option>
             <option value="topSpeed">Top speed</option>
         </select>
+		<!-- Toggle: swap the instruction floors between mnemonic dropdowns and raw 2-digit code boxes -->
+		<label class="mode-toggle"><input type="checkbox" id="codeMode" onchange="toggleCodeMode()"> Machine&nbsp;code</label>
 		<button id="back" onclick="stepBack()" disabled>&#9664; BACK</button>
         <button id="run" onclick="auto()">RUN</button>
         <button id="step" onclick="step()">NEXT &#9654;</button>
@@ -411,6 +441,12 @@
 			the codes listed in the <strong>Instruction Set</strong> below, so as your program runs the elevator is still
 			carrying out the underlying machine code.
 		</p>
+		<p>
+			To see what that machine code looks like, tick the <strong>Machine code</strong> box in the control panel:
+			the instruction floors switch between the mnemonic drop-downs and their raw <strong>two-digit codes</strong>.
+			Both views edit the same program, so you can write in whichever you prefer and flip between them at any time.
+		</p>
+		<h3>Getting Creative</h3>
 		<p>
 			With only 10 instruction and data floors available by default, the Computing Elevator encourages users to get
 			creative, designing their own problems and solving them efficiently, like generating a full Fibonacci sequence
@@ -611,7 +647,9 @@
 		  the second is the floor it acts on (see the Instruction Set). The UI
 		  shows friendly mnemonics in dropdowns, but programs are always stored
 		  internally as these 2-digit codes, so examples and saved/shared files
-		  stay compatible.
+		  stay compatible. A control-panel toggle (the "Machine code" checkbox)
+		  swaps the dropdowns for raw 2-digit code boxes; both edit the same
+		  program because the dropdowns remain the single source of truth.
 
 		  executeProgram() is the fetch-execute loop: it reads the instruction at
 		  the program counter (pc), animates the elevator to the relevant floors
@@ -868,6 +906,45 @@
 			}
 		}
 
+		// ---- Machine-code editor (alternate to the mnemonic dropdowns) -----
+		// Is this string a valid 2-digit instruction code (or empty)?
+		function isValidCode(v) {
+			return v === '' ||
+				/^[0-6][0-9]$/.test(v) ||   // 0X..6X
+				/^7[0-9]$/.test(v) ||        // 7X
+				/^8[0-2]$/.test(v) ||        // 80 / 81 / 82
+				/^9[0-9]$/.test(v);          // 9X
+		}
+
+		// Handle typing in a floor's code box: a valid code is written straight
+		// into the (canonical) dropdowns; an invalid one is flagged in red.
+		function onCodeInput(i, inp) {
+			const v = inp.value.trim();
+			if (isValidCode(v)) {
+				inp.classList.remove('invalid');
+				setInsCode(i, v);
+				invalidateHistory();
+			} else {
+				inp.classList.add('invalid');
+			}
+		}
+
+		// Fill every code box from the dropdowns (keeps the two views in sync)
+		function syncCodeInputs() {
+			codeInputs.forEach((inp, i) => {
+				inp.value = getInsCode(i);
+				inp.classList.remove('invalid');
+			});
+		}
+
+		// Switch the instructions tower between mnemonic and machine-code views
+		function toggleCodeMode() {
+			const on = document.getElementById('codeMode').checked;
+			const tower = document.getElementById('instructionsTower');
+			if (on) syncCodeInputs();   // fill code boxes from the current program
+			tower.classList.toggle('code-mode', on);
+		}
+
 		// Plain-English description of a 2-digit code, for the narration bar
 		function describeInstruction(code, floor) {
 			const x = code[1];
@@ -953,6 +1030,16 @@
 				controls.appendChild(opSel);
 				controls.appendChild(operandSel);
 				instructionFloor.appendChild(controls);
+
+				// Alternate machine-code editor for this floor (shown in code-mode)
+				const codeInput = document.createElement('input');
+				codeInput.className = 'code-input';
+				codeInput.maxLength = 2;
+				codeInput.inputMode = 'numeric';
+				codeInput.setAttribute('aria-label', `Instruction floor ${i}: machine code`);
+				codeInput.addEventListener('input', () => onCodeInput(i, codeInput));
+				instructionFloor.appendChild(codeInput);
+
 				instructionsTower.appendChild(instructionFloor);
 			}
 
@@ -1006,6 +1093,7 @@
 		// Clear instructions and data
 		function clearInputs() {
 			insOpSelects.forEach((sel, i) => setInsCode(i, ''));
+			syncCodeInputs();
 
 			inputDatElements.forEach(input => {
 				input.value = '';
@@ -1040,6 +1128,9 @@
 			inputDatElements.forEach((input, index) => {
 				input.value = program.data[index] !== undefined ? program.data[index] : '';
 			});
+
+			// Keep the machine-code boxes in step with the dropdowns
+			syncCodeInputs();
 		}
 		
 		// Select an example
@@ -1295,6 +1386,7 @@
 			// Disable inputs while running
 			insOpSelects.forEach(sel => sel.disabled = true);
 			insOperandSelects.forEach(sel => sel.disabled = true);
+			codeInputs.forEach(inp => inp.disabled = true);
 			inputDatElements.forEach(input => input.disabled = true);
 
 			// Data is still free-typed, so validate it (instructions come from
@@ -1631,6 +1723,7 @@
 			insOpSelects.forEach(sel => sel.disabled = false);
 			// Re-sync operand enabled/disabled state per operation
 			insOpSelects.forEach((sel, i) => onOpChange(sel, insOperandSelects[i]));
+			codeInputs.forEach(inp => inp.disabled = false);
 			document.querySelectorAll('#dataTower input').forEach(input => input.disabled = false);
 			document.getElementById("step").disabled = false;
 			document.getElementById("run").disabled = false;
@@ -1646,12 +1739,13 @@
 		}
 
 		// ---- Startup ----
-		// Build the floors, then cache references to the instruction dropdowns
-		// and data inputs (used throughout the rest of the script).
+		// Build the floors, then cache references to the instruction dropdowns,
+		// the machine-code boxes and the data inputs (used throughout the script).
 		createTowersElevator();
-		const insOpSelects = document.querySelectorAll('#instructionsTower .op-select');
-		const insOperandSelects = document.querySelectorAll('#instructionsTower .operand-select');
-		const inputDatElements = document.querySelectorAll('#dataTower input');
+		const insOpSelects = document.querySelectorAll('#instructionsTower .op-select');      // operation dropdowns
+		const insOperandSelects = document.querySelectorAll('#instructionsTower .operand-select'); // floor-number dropdowns
+		const codeInputs = document.querySelectorAll('#instructionsTower .code-input');       // 2-digit machine-code boxes
+		const inputDatElements = document.querySelectorAll('#dataTower input');               // data-floor number boxes
 
 		// Editing the program invalidates the step back/forward history
 		insOpSelects.forEach(sel => sel.addEventListener('change', invalidateHistory));
