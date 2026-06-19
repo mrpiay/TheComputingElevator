@@ -7,6 +7,22 @@
     <title>The Computing Elevator</title>
 
     <style>
+        /*
+          THE COMPUTING ELEVATOR — stylesheet
+
+          Screen layout (top to bottom):
+            - title + subtitle
+            - INSTRUCTIONS / DATA header caps (.labels)
+            - the machine: one flex row (.container) of FIVE columns —
+                instructions tower | instruction numbers | elevator (CPU) | data numbers | data tower
+            - narration bar (.narration)  ->  plain-English description of the running instruction
+            - control panel (.buttons)
+            - three description cards (.info / .newinfo)
+
+          Colours: each instruction category (memory/jumps/I-O/advanced) has a
+          colour, reused across the dropdowns, the instruction-set tables and
+          their headings. They are defined once as CSS variables below.
+        */
         :root {
             /* Friendly category colours (used for dropdowns + legend + tables) */
             --mem:  #2f6fed;   --mem-bg:  #e6efff;
@@ -27,6 +43,7 @@
         }
         h1 { margin: 18px auto 0; }
         h3 { margin: 4px auto; font-weight: 500; color: #5a6072; }
+        /* The machine row: five columns laid out side by side (30/5/30/5/30 %) */
         .container {
 			width: 80%;
 			margin: 0 auto;
@@ -35,6 +52,7 @@
 			align-items: stretch;
             gap: 0px;
         }
+        /* Description cards below the machine (Overview, Paging, Instruction Set) */
         .info {
 			width: 80%;
 			margin: 28px auto;
@@ -59,6 +77,7 @@
 			color: #3a4150;
 			font-weight: 600;
 		}
+        /* "New in v2.0" callout card — same as .info but with a slate left edge */
         .newinfo {
 			width: 80%;
 			margin: 28px auto;
@@ -72,6 +91,7 @@
 			padding: 22px 32px;
 			box-sizing: border-box;
         }
+		/* INSTRUCTIONS / DATA header caps sitting on top of the two towers */
 		.labels {
 			width: 30%;
 			background-color: #2a6b78;
@@ -99,6 +119,7 @@
 			font-size: 16px;
 			color: #444b5e;
 		}
+		/* Control panel holding the run/step buttons and the program selectors */
 		.buttons {
 			width: 80%;
 			box-sizing: border-box;
@@ -120,6 +141,7 @@
 		}
 		.buttons button:hover:not(:disabled) { background: #f0f3fb; }
 		.buttons button:disabled { opacity: 0.5; cursor: default; }
+		/* Chip showing the loaded program's name + description */
 		.description {
 			display: inline-block;
 			background-color: #fff;
@@ -129,6 +151,13 @@
 			border-radius: 8px;
 			border: 1px solid var(--line);
 		}
+		/*
+		  The five machine columns. All use flex-direction: column-reverse so the
+		  first child appended in JS sits at the BOTTOM — floor 0 ends up low and
+		  higher floors stack upward, like a real building. The number columns
+		  (.numIns/.numDat) show the floor index; the elevator column is the CPU.
+		  Floors are sized with box-sizing so all five columns line up exactly.
+		*/
 		.tower {
             width: 30%;
             border-top: 1px solid var(--line);
@@ -182,6 +211,8 @@
 			flex-direction: column;
 			justify-content: center;
 		}
+        /* .highlight marks the floor number the elevator is currently visiting;
+           .highlight2 is the elevator car itself (the bright gold cell) */
         .highlight {
             color: black;
 			background-color: #ffe9a8;
@@ -255,11 +286,18 @@
 </head>
 
 <body>
-    
+
+	<!--
+	  The towers, number columns and elevator are EMPTY here: their floors are
+	  built in JavaScript by createTowersElevator() once the number of floors
+	  (which depends on the ?blocks= URL parameter) is known.
+	-->
+
 	<h1 style="margin: 0 auto">The Computing Elevator</h1>
 	<h3>"Floor-Level Programming"</h3>
 	<small class="author">by Mr. Piay – v2.0</small>
-	
+
+	<!-- Header caps that sit on top of the instructions and data towers -->
 	<!-- Labels -->
 	<div class="container" >
 		<div class ="labels">INSTRUCTIONS</div>
@@ -269,7 +307,7 @@
 		<div class ="labels">DATA</div>
 	</div>
 
-	<!-- Towers -->
+	<!-- The machine: instructions | instr-numbers | elevator (CPU) | data-numbers | data -->
 	<div class="container">
 		<div id="instructionsTower" class="tower"></div>
 		<div id="numIns" class="numIns"></div>
@@ -499,13 +537,13 @@
 						<td>Go to instruction floor X</td>
 					</tr>
 					<tr>
-						<td class="mn mn-jump">JUMP IF 0 X</td>
+						<td class="mn mn-jump">JUMP IF ACC = 0 X</td>
 						<td>5X</td>
 						<td>IF ACC &equals; 0 THEN PC &larr; X</td>
 						<td>If the elevator value is 0, go to instruction floor X</td>
 					</tr>
 					<tr>
-						<td class="mn mn-jump">JUMP IF &lt;0 X</td>
+						<td class="mn mn-jump">JUMP IF ACC &lt; 0 X</td>
 						<td>6X</td>
 						<td>IF ACC &lt; 0 THEN PC &larr; X</td>
 						<td>If the elevator value is less than 0, go to instruction floor X</td>
@@ -566,28 +604,49 @@
 	</div>
 
 	<script>
-		
+		/*
+		  HOW THE SIMULATOR WORKS
+		  -----------------------
+		  Each instruction is a 2-digit code: the first digit is the operation,
+		  the second is the floor it acts on (see the Instruction Set). The UI
+		  shows friendly mnemonics in dropdowns, but programs are always stored
+		  internally as these 2-digit codes, so examples and saved/shared files
+		  stay compatible.
+
+		  executeProgram() is the fetch-execute loop: it reads the instruction at
+		  the program counter (pc), animates the elevator to the relevant floors
+		  via moveElevator(), updates the accumulator (the `elevator` variable),
+		  then advances pc. After every instruction it records a full snapshot of
+		  the machine state so the user can STEP BACK / FORWARD through the run.
+		*/
+
+		// Floor count comes from the URL: ?blocks=n gives n pages of 10 floors each
 		const urlParams = new URLSearchParams(window.location.search);
 		const pageParam = urlParams.get('blocks');
 		const numPages = pageParam ? Math.max(1, Math.min(10, parseInt(pageParam))) : 1;
-		const size = numPages * 10; // Calculate the total number of floors
+		const size = numPages * 10; // total number of floors
 
-		let input = [];
-		let output = [];
-		let elevator = 0;
-		let pc = 0;
-		let speedStop = [500, 0];
-		let speedMove = [100, 0];
-		let indexSpeed = 0;
-		let stepMode = false;
-		let stopRequested = false;
-		let page = 0;
+		// ---- Machine state ----
+		let input = [];            // values entered via INPUT (80)
+		let output = [];           // values sent via OUTPUT (81)
+		let elevator = 0;          // the accumulator (ACC) shown inside the elevator car
+		let pc = 0;                // program counter: next instruction floor to run
+		let page = 0;              // current page, set by SET PAGE (9X)
 
-		// Step back/forward: history of machine-state snapshots
-		let history = [];
-		let histIndex = -1;
-		const HISTORY_CAP = 500;
-		let running = false;   // true while a run/step/restore is in progress
+		// ---- Animation timing ---- [normal speed, top speed] in milliseconds
+		let speedStop = [500, 0];  // pause when the elevator stops at a floor
+		let speedMove = [100, 0];  // pause between floors while travelling
+		let indexSpeed = 0;        // which speed is selected (0 = normal, 1 = top)
+
+		// ---- Run control ----
+		let stepMode = false;      // true when running a single instruction (NEXT)
+		let stopRequested = false; // set by STOP to break out of the run loop
+
+		// ---- Step back/forward: history of machine-state snapshots ----
+		let history = [];          // one snapshot per executed instruction
+		let histIndex = -1;        // where we currently are within `history`
+		const HISTORY_CAP = 500;   // keep at most this many snapshots
+		let running = false;       // true while a run/step/restore is in progress
 
 		let program = {
 			name: "",
@@ -717,7 +776,7 @@
 			{ label: 'Memory & maths', group: 'mem', items: [
 				['0', 'LOAD'], ['1', 'ADD'], ['2', 'SUBTRACT'], ['3', 'STORE'] ] },
 			{ label: 'Jumps', group: 'jump', items: [
-				['4', 'JUMP'], ['5', 'JUMP IF 0'], ['6', 'JUMP IF <0'] ] },
+				['4', 'JUMP'], ['5', 'JUMP IF ACC = 0'], ['6', 'JUMP IF ACC < 0'] ] },
 			{ label: 'Input / output', group: 'io', items: [
 				['80', 'INPUT'], ['81', 'OUTPUT'], ['82', 'STOP'] ] },
 			{ label: 'Advanced', group: 'adv', items: [
@@ -1206,7 +1265,7 @@
 
 			// Update elevator content
 			const elevatorFloor = document.getElementById(`elevator-${floor}`);
-			elevatorFloor.innerHTML = `<strong>ELEVATOR</strong><br><code>${elevator}</code>`;
+			elevatorFloor.innerHTML = `<strong>ELEVATOR (ACC)</strong><br><code>${elevator}</code>`;
 		}
 
 		// Update input and output displays
@@ -1586,6 +1645,9 @@
 			updateStepButtons();
 		}
 
+		// ---- Startup ----
+		// Build the floors, then cache references to the instruction dropdowns
+		// and data inputs (used throughout the rest of the script).
 		createTowersElevator();
 		const insOpSelects = document.querySelectorAll('#instructionsTower .op-select');
 		const insOperandSelects = document.querySelectorAll('#instructionsTower .operand-select');
