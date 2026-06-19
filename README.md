@@ -1,3 +1,5 @@
+## Overview
+
 The **Computing Elevator** is a unique and engaging web-based educational tool designed to introduce the basics of computer architecture and low-level programming through a visual and interactive experience.
 
 The simulator represents a minimal computer architecture illustrated as **twin towers** (representing the memory) connected by an **elevator** (representing the CPU).
@@ -6,7 +8,7 @@ The simulator represents a minimal computer architecture illustrated as **twin t
 - The **CPU** is visualized as an elevator moving between floors, following the **fetch-decode-execute** cycle.
 - The elevator displays the value of the **accumulator** register (ACC) as each instruction is processed.
 
-## How the Elevator Moves
+### How the Elevator Moves
 
 The elevator carries out one instruction at a time, and where it travels next depends on what that instruction does:
 
@@ -15,7 +17,7 @@ The elevator carries out one instruction at a time, and where it travels next de
 - A **jump** instruction changes the program counter, so the elevator does **not** go to the next floor — it travels straight to the instruction floor named by the jump. A **conditional jump** only does this if the elevator's value meets the condition (for example, it is 0).
 - **INPUT** and **OUTPUT** take place on the special **floor −1** at the very bottom of each tower: the elevator drops down there to take a value from the user, or to send the elevator's value to the output.
 
-## Code and Mnemonics
+### Writing Programs with Mnemonics
 
 Computers don't understand words — every instruction has to be expressed as a **code**. In the Computing Elevator each instruction is a **two denary digit code** (a simple kind of **machine code**): the first digit chooses the **operation** and the second digit chooses the **floor** it works on. For example, **13** means "ADD the number on data floor 3".
 
@@ -23,11 +25,9 @@ Writing whole programs in numbers is hard to read, so instead we write our progr
 
 With only 10 instruction and data floors available by default, the Computing Elevator encourages users to get creative, designing their own problems and solving them efficiently, like generating a full Fibonacci sequence in just 9 instructions (see Example 10).
 
-Users can design their own programs by selecting instructions from the dropdowns and typing data on the respective floors.
+### Running, Saving and Sharing
 
-## Running a Program
-
-There are several ways to run a program:
+Users can design their own programs by choosing instructions from the drop-down boxes and typing data on the respective floors. There are several ways to run a program:
 
 - **RUN** executes the whole program automatically (use the speed selector for normal or top speed).
 - **NEXT ▶** runs a single instruction at a time, so you can follow the fetch-decode-execute cycle step by step.
@@ -36,11 +36,9 @@ There are several ways to run a program:
 
 As a program runs, a narration bar describes the current instruction in plain English (for example, "Floor 2: ADD the number on data floor 3 to the elevator").
 
-## Saving and Sharing
+Programs can be **saved** to a JSON file and **loaded** later, or turned into a **shareable link** with the **SHARE** button: the program is encoded into the page URL and copied to the clipboard, so opening the link reproduces the program ready to run — ideal for sending a puzzle to a classmate.
 
-Programs can be **saved** to a JSON file and **loaded** later. They can also be turned into a **shareable link** with the **SHARE** button: the program is encoded into the page URL (and copied to the clipboard), so opening the link reproduces the program ready to run — ideal for sending a puzzle to a classmate.
-
-## New Feature in v2.0
+## New in v2.0: Paging
 
 The Computing Elevator **v2.0** introduces a new feature called **Paging**, which allows users to extend the addressable memory space beyond the initial 10 floors, enabling more complex and creative programming challenges.
 
