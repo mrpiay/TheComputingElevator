@@ -48,10 +48,16 @@
 			box-sizing: border-box;
         }
 		/* Neutral heading accent inside section cards */
-		.info h2 {
+		.info h2, .newinfo h2 {
 			margin-top: 0;
 			padding-bottom: 8px;
 			border-bottom: 2px solid var(--line);
+		}
+		/* Subsection headings inside the Overview card */
+		#overview h3 {
+			margin: 26px 0 8px;
+			color: #3a4150;
+			font-weight: 600;
 		}
         .newinfo {
 			width: 80%;
@@ -103,6 +109,8 @@
 		}
 		.buttons button, .buttons select {
 			font-size: 14px;
+			line-height: 1.4;
+			vertical-align: middle;
 			padding: 6px 12px;
 			margin: 2px;
 			border-radius: 8px;
@@ -225,6 +233,10 @@
 		.cat-adv  { color: var(--adv);  border-left: 6px solid var(--adv);  padding-left: 8px; }
 		/* Mnemonic column in the Instruction Set tables, colour-matched to dropdowns */
 		#instructionSet td.mn { font-weight: 700; white-space: nowrap; color: #000; }
+		/* Keep the Code and Instruction columns in a code-style monospace font */
+		#instructionSet td:nth-child(2), #instructionSet td:nth-child(3) {
+			font-family: 'Consolas', 'Courier New', monospace;
+		}
 		/* INPUT / OUTPUT floors at the bottom of each tower (grey text boxes on white) */
 		textarea {
             width: 80%;
@@ -271,12 +283,13 @@
 
     <!-- Buttons -->
     <div class="buttons">
-        <select id="speed">
+        <select id="speed" aria-label="Animation speed">
             <option value="normalSpeed">Normal speed</option>
             <option value="topSpeed">Top speed</option>
         </select>
-        <button id="step" onclick="step()">STEP</button>
+		<button id="back" onclick="stepBack()" disabled>&#9664; BACK</button>
         <button id="run" onclick="auto()">RUN</button>
+        <button id="step" onclick="step()">NEXT &#9654;</button>
 		<button id="stop" onclick="stop()">STOP</button>
 		<button id="reset" onclick="reset()">RESET</button>
 		<button id="clear" onclick="clearInputs()">CLEAR</button>
@@ -284,16 +297,18 @@
 			<p class="description" id="description"></p>
 		</div>
 		<button id="load" onclick="loadProgramFromFile()">LOAD</button>
-        <select id="examples">
+        <select id="examples" aria-label="Choose an example program">
             <option value="your">Your program...</option>
         </select>
 		<button id="save" onclick="save()">SAVE</button>
+		<button id="share" onclick="share()">SHARE</button>
     </div>
     
     <!-- Description -->
-	<div class="info">
+	<div class="info" id="overview">
+		<h2>Overview</h2>
 		<p>
-			The <strong>Computing Elevator</strong> is a a unique and engaging web-based educational tool designed 
+			The <strong>Computing Elevator</strong> is a unique and engaging web-based educational tool designed
 			to introduce the basics of computer architecture and low-level programming through a visual and interactive experience.</p>
 			
 		<p>
@@ -313,8 +328,9 @@
 				is processed.
 			</li>
 		</ul>
+		<h3>How the Elevator Moves</h3>
 		<p>
-			<strong>How the elevator moves.</strong> The elevator carries out one instruction at a time, and where
+			The elevator carries out one instruction at a time, and where
 			it travels next depends on what that instruction does:
 		</p>
 		<ul>
@@ -342,6 +358,7 @@
 				the elevator's value to the output.
 			</li>
 		</ul>
+		<h3>Writing Programs with Mnemonics</h3>
 		<p>
 			Computers don't understand words &ndash; every instruction has to be expressed as a <strong>code</strong>.
 			In the Computing Elevator each instruction is a <strong>two denary digit code</strong> (a simple kind of
@@ -361,24 +378,39 @@
 			creative, designing their own problems and solving them efficiently, like generating a full Fibonacci sequence
 			in just 9 instructions (see Example 10).
 		</p>
+		<h3>Running, Saving and Sharing</h3>
 		<p>
-			Users can design their own programs by entering instructions and data on the respective floors. 
-			These programs can be <strong>saved</strong> to a JSON file and <strong>loaded</strong> later, facilitating sharing and experimentation.
+			Users can design their own programs by choosing instructions from the drop-down boxes and typing data on the
+			respective floors. There are several ways to run a program:
+		</p>
+		<ul>
+			<li><strong>RUN</strong> executes the whole program automatically (use the speed selector for normal or top speed).</li>
+			<li><strong>NEXT &#9654;</strong> runs a single instruction at a time, so you can follow the fetch-decode-execute cycle step by step.</li>
+			<li><strong>&#9664; BACK</strong> rewinds one step, restoring the full machine state (program counter, accumulator, memory and outputs) so you can replay and review exactly what the elevator did. Stepping forward again replays the recorded states without re-prompting for input.</li>
+			<li><strong>STOP</strong> halts a run, <strong>RESET</strong> returns to the start, and <strong>CLEAR</strong> empties every floor.</li>
+		</ul>
+		<p>
+			As a program runs, a narration bar describes the current instruction in plain English (for example,
+			"Floor 2: ADD the number on data floor 3 to the elevator").
+		</p>
+		<p>
+			Programs can be <strong>saved</strong> to a JSON file and <strong>loaded</strong> later, or turned into a
+			<strong>shareable link</strong> with the <strong>SHARE</strong> button: the program is encoded into the page
+			URL and copied to the clipboard, so opening the link reproduces the program ready to run &ndash; ideal for
+			sending a puzzle to a classmate.
 		</p>
 	</div>
 	<div class="newinfo">
+		<h2>New in v2.0: Paging</h2>
 		<p>
-			<strong>New feature in v2.0</strong>
+			The Computing Elevator <strong>v2.0</strong> introduces a new feature called <strong>Paging</strong>, which
+			allows users to extend the addressable memory space beyond the initial
+			10 floors, enabling more complex and creative programming challenges.
 		</p>
 		<p>
-			The Computing Elevator <strong>v2.0</strong> introduces a new feature called <strong>Paging</strong> which 
-			allows users to extend the addressable memory space beyond the initial 
-			10 floors, enabling more complex and creative programming challenges. 
-		</p>
-		<p>
-			Paging divides the memory into multiple blocks or pages, <strong>each containing 10 floors</strong>. 
-			This feature is implemented through the new <strong>9X</strong> instruction, which allows 
-			selecting the current page:
+			Paging divides the memory into multiple blocks or pages, <strong>each containing 10 floors</strong>.
+			This feature is implemented through the <strong>9X</strong> instruction (mnemonic <strong>SET PAGE</strong>),
+			which allows selecting the current page:
 		</p>
 		<p>
 			<strong>90</strong>: Page 0 (floors 0-9)<br>
@@ -388,19 +420,24 @@
 		</p>
 		<p>
 			With paging, the second digit of an instruction (<strong>X</strong>) refers to a floor within the current
-			page (block of 10 floors). Additionally, the index register has been moved to floor 0 (it was floor 9 in v-1.0.)
+			page (block of 10 floors). Additionally, the index register has been moved to floor 0 (it was floor 9 in v1.0).
 		</p>
 		<p>
-			To set the number of pages used in the simulator, add <strong>?blocks=n</strong> 
-			to the URL, where <strong>n</strong> should be a number between 1 and 10. 
-			If this parameter is not added, the simulator will default to 1 page (10 floors). 
+			To set the number of pages used in the simulator, add <strong>?blocks=n</strong>
+			to the URL, where <strong>n</strong> should be a number between 1 and 10.
+			If this parameter is not added, the simulator will default to 1 page (10 floors).
+		</p>
 	</div>
 	
     <!-- Instruction Set -->
-	<code>
 	<div class="info">
 		<div id="instructionSet">
 			<h2>Instruction Set</h2>
+			<p>
+				Programs are written using the <strong>mnemonics</strong> below, picked from the dropdown on each
+				instruction floor (the operation, plus a floor number <strong>X</strong> where one is needed). Every
+				mnemonic maps to a <strong>two digit code</strong> &ndash; the machine code the elevator actually runs.
+			</p>
 			<h3 class="cat-mem">Memory &amp; Arithmetic</h3>
 			<table border="1" cellspacing="0" cellpadding="6" style="width:100%; border-collapse: collapse;">
 				<thead style="background-color: lightgray;">
@@ -527,8 +564,7 @@
 			</table>
 		</div>
 	</div>
-	</code>
-    
+
 	<script>
 		
 		const urlParams = new URLSearchParams(window.location.search);
@@ -545,7 +581,14 @@
 		let indexSpeed = 0;
 		let stepMode = false;
 		let stopRequested = false;
-		
+		let page = 0;
+
+		// Step back/forward: history of machine-state snapshots
+		let history = [];
+		let histIndex = -1;
+		const HISTORY_CAP = 500;
+		let running = false;   // true while a run/step/restore is in progress
+
 		let program = {
 			name: "",
 			instructions: [],
@@ -793,6 +836,32 @@
 			document.getElementById('narration').innerHTML = html;
 		}
 
+		// ---- Small utilities ---------------------------------------------
+		// Pause for `ms` milliseconds (used to pace the elevator animation)
+		function sleep(ms) {
+			return new Promise(resolve => setTimeout(resolve, ms));
+		}
+
+		// A jump instruction (4 = JUMP, 5 = JUMP IF 0, 6 = JUMP IF <0) sets the
+		// PC itself, so the normal "advance to next floor" step is skipped.
+		function isJump(command) {
+			return command === '4' || command === '5' || command === '6';
+		}
+
+		// URL-safe base64 (used for the shareable-link feature)
+		function b64encode(str) {
+			const bytes = new TextEncoder().encode(str);
+			let bin = '';
+			bytes.forEach(b => bin += String.fromCharCode(b));
+			return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+		}
+		function b64decode(b64) {
+			b64 = b64.replace(/-/g, '+').replace(/_/g, '/');
+			const bin = atob(b64);
+			const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+			return new TextDecoder().decode(bytes);
+		}
+
 		// Create towers + elevator
 		function createTowersElevator() {
 			// Get towers
@@ -806,6 +875,7 @@
 			inputFloor.classList.add('floor');
 			inputElement.id = 'input';
 			inputElement.readOnly = true;
+			inputElement.setAttribute('aria-label', 'Program inputs');
 			inputElement.value = `INPUTS:\n`;
 			inputFloor.appendChild(inputElement);
 			instructionsTower.appendChild(inputFloor);
@@ -818,6 +888,8 @@
 				controls.className = 'instr-controls';
 				const opSel = buildOpSelect();
 				const operandSel = buildOperandSelect();
+				opSel.setAttribute('aria-label', `Instruction floor ${i}: operation`);
+				operandSel.setAttribute('aria-label', `Instruction floor ${i}: floor number`);
 				opSel.addEventListener('change', () => onOpChange(opSel, operandSel));
 				controls.appendChild(opSel);
 				controls.appendChild(operandSel);
@@ -855,6 +927,7 @@
 			outputFloor.classList.add('floor');
 			outputElement.id = 'output';
 			outputElement.readOnly = true;
+			outputElement.setAttribute('aria-label', 'Program outputs');
 			outputElement.value = `OUTPUTS:\n`;
 			outputFloor.appendChild(outputElement);
 			dataTower.appendChild(outputFloor);
@@ -865,6 +938,7 @@
 				const inputElement = document.createElement('input');
 				dataFloor.classList.add('floor');
 				inputElement.id = `data-${i}`;
+				inputElement.setAttribute('aria-label', `Data floor ${i}`);
 				dataFloor.appendChild(inputElement);
 				dataTower.appendChild(dataFloor);
 			}
@@ -877,19 +951,23 @@
 			inputDatElements.forEach(input => {
 				input.value = '';
 			});
+
+			invalidateHistory();
 		}
 
 		// Reset computer
 		function reset() {
 			pc = 0;
 			elevator = 0;
+			page = 0;
 			moveElevator(1, 'ins');
 			input = [];
 			output = [];
 			document.getElementById('input').value = `INPUTS:\n`;
 			document.getElementById('output').value = `OUTPUTS:\n`;
-			setNarration('Build a program with the dropdowns, then press <strong>STEP</strong> or <strong>RUN</strong>.');
+			setNarration('Build a program with the dropdowns, then press <strong>NEXT &#9654;</strong> or <strong>RUN</strong>.');
 			loadInsDat();
+			initHistory();
 		}
 
 		// Load instructions and data from program
@@ -1008,6 +1086,62 @@
 			document.body.removeChild(a);
 		}
 
+		// Build a shareable link that encodes the current program, and copy it
+		function share() {
+			const instructions = trimTrailing(Array.from(insOpSelects).map((sel, i) => getInsCode(i)));
+			const data = trimTrailing(Array.from(inputDatElements).map(input => input.value));
+
+			const prog = { i: instructions, d: data };
+			// Only attach the stored name/description when sharing an example
+			// (a user-built program keeps the generic "Shared program" label)
+			if (document.getElementById('examples').value !== 'your' && program.name) {
+				prog.n = program.name;
+				prog.s = program.description;
+			}
+
+			const encoded = b64encode(JSON.stringify(prog));
+			const maxFloors = Math.max(instructions.length, data.length);
+			const blocksNeeded = Math.ceil(maxFloors / 10) || 1;
+
+			const base = location.href.split('#')[0].split('?')[0];
+			let url = base + '?';
+			if (blocksNeeded > 1) url += 'blocks=' + blocksNeeded + '&';
+			url += 'p=' + encoded;
+
+			if (navigator.clipboard && navigator.clipboard.writeText) {
+				navigator.clipboard.writeText(url).then(
+					() => setNarration('&#128279; Shareable link copied to the clipboard!'),
+					() => window.prompt('Copy this shareable link:', url)
+				);
+			} else {
+				window.prompt('Copy this shareable link:', url);
+			}
+		}
+
+		// Remove trailing empty floors so shared links stay short
+		function trimTrailing(arr) {
+			const a = arr.slice();
+			while (a.length && (a[a.length - 1] === '' || a[a.length - 1] === undefined)) a.pop();
+			return a;
+		}
+
+		// Decode a program from the ?p= URL parameter, if present
+		function getSharedProgram() {
+			const p = urlParams.get('p');
+			if (!p) return null;
+			try {
+				const obj = JSON.parse(b64decode(p));
+				return {
+					name: obj.n || 'Shared program',
+					description: obj.s || 'Loaded from a shared link',
+					instructions: Array.isArray(obj.i) ? obj.i : [],
+					data: Array.isArray(obj.d) ? obj.d : []
+				};
+			} catch (e) {
+				return null;
+			}
+		}
+
 		// Move elevator to instruction or data floor
 		async function moveElevator(floor, insdat) {
 			let elevatorFloors = document.querySelectorAll('#elevatorTower .floor2');
@@ -1031,7 +1165,7 @@
 			}
 
 			//Stop elevator for a while
-			await new Promise(resolve => setTimeout(resolve, speedStop[indexSpeed]));
+			await sleep(speedStop[indexSpeed]);
 
 			// Do not highlight elevator
 			elevatorFloors.forEach(floor => floor.classList.remove('highlight2'));
@@ -1054,7 +1188,7 @@
 				updateElevator(currentPosition);
 
 				// Stop elevator for a while
-				await new Promise(resolve => setTimeout(resolve, speedMove[indexSpeed]));
+				await sleep(speedMove[indexSpeed]);
 
 				// Do not highlight elevator
 				elevatorFloors[currentPosition].classList.remove('highlight2');
@@ -1116,14 +1250,12 @@
 				}
 			}
 
-			// Read instructions and data
-			instructions = Array.from(insOpSelects).map((sel, i) => getInsCode(i));
-			data = Array.from(inputDatElements).map(input => Number(input.value));
+			// Read the program from the dropdowns (data is read live from the
+			// floors during execution, so it doesn't need to be copied here)
+			const instructions = Array.from(insOpSelects).map((sel, i) => getInsCode(i));
 
 			stopRequested = false;
 
-			let page = 0;
-			
 			while (!stopRequested) {
 				const instr = instructions[pc];
 				const command = instr[0];
@@ -1134,7 +1266,7 @@
 
 				// Send elevator to instruction floor
 				await moveElevator(pc + 1, "ins");
-				await new Promise(resolve => setTimeout(resolve, speedStop[indexSpeed]));
+				await sleep(speedStop[indexSpeed]);
 					
 				// Execute the instruction
 				switch (command) {
@@ -1155,7 +1287,7 @@
 						}
 
 						// Stop elevator for a while
-						await new Promise(resolve => setTimeout(resolve, speedStop[indexSpeed]));
+						await sleep(speedStop[indexSpeed]);
 
 						let dataValue = parseInt(dataInput.value, 10);
 			
@@ -1179,7 +1311,7 @@
 						// Send elevator to data floor
 						await moveElevator(operand + 1, "dat");
 						// Stop elevator for a while
-						await new Promise(resolve => setTimeout(resolve, speedStop[indexSpeed]));
+						await sleep(speedStop[indexSpeed]);
 						// Update data floor
 						inputDatElements[operand].value = elevator;
 						break;
@@ -1189,7 +1321,7 @@
 						// Send elevator to instruction floor
 						await moveElevator(pc + 1, "ins");
 						// Stop elevator for a while
-						await new Promise(resolve => setTimeout(resolve, speedStop[indexSpeed]));
+						await sleep(speedStop[indexSpeed]);
 						break;
 					case '5': // JPZ
 						// Change PC
@@ -1202,7 +1334,7 @@
 						// Send elevator to instruction floor
 						await moveElevator(pc + 1, "ins");
 						// Stop elevator for a while
-						await new Promise(resolve => setTimeout(resolve, speedStop[indexSpeed]));
+						await sleep(speedStop[indexSpeed]);
 						break;
 					case '6': // JPN
 						// Change PC
@@ -1215,11 +1347,13 @@
 						// Send elevator to instruction floor
 						await moveElevator(pc + 1, "ins");
 						// Stop elevator for a while
-						await new Promise(resolve => setTimeout(resolve, speedStop[indexSpeed])); // Wait before next instruction
+						await sleep(speedStop[indexSpeed]); // Wait before next instruction
 						break;
 					case '7': // LDX (indexed addressing)
-						// Effective address (indexed addressing mode)
-						operand = (operand + parseInt(inputDatElements[0].value)) % size;
+						// Effective address (indexed addressing mode). The index
+						// register is data floor 0; treat an empty floor as 0.
+						const indexReg = parseInt(inputDatElements[0].value) || 0;
+						operand = (operand + indexReg) % size;
 						const dataInputIdx = inputDatElements[operand];
 						// Send elevator to data floor
 						await moveElevator(operand + 1, "dat");
@@ -1232,7 +1366,7 @@
 
 						let dataValueIdx = parseInt(dataInputIdx.value, 10);
 						// Stop elevator for a while
-						await new Promise(resolve => setTimeout(resolve, speedStop[indexSpeed]));
+						await sleep(speedStop[indexSpeed]);
 						// Update elevator
 						elevator = dataValueIdx;
 						// Update elevator content
@@ -1256,7 +1390,7 @@
 							// Send elevator to input floor
 							await moveElevator(0, "ins");
 							// Stop elevator for a while
-							await new Promise(resolve => setTimeout(resolve, speedStop[indexSpeed]));
+							await sleep(speedStop[indexSpeed]);
 							// Update elevator
 							elevator = parseInt(userInput);
 							// Update elevator content
@@ -1270,7 +1404,7 @@
 							// Send elevator to output floor
 							await moveElevator(0, "dat");
 							// Stop elevator for a while
-							await new Promise(resolve => setTimeout(resolve, speedStop[indexSpeed]));
+							await sleep(speedStop[indexSpeed]);
 							// Update input and output displays
 							update();
 						} else if (instr === '82') {
@@ -1288,10 +1422,13 @@
 						return;
 				}
 
-				// Proceed to next instruction
-				if (!"456".includes(command)) {
+				// Proceed to next instruction (jumps set the PC themselves)
+				if (!isJump(command)) {
 					pc = (pc + 1) % size;
 				}
+
+				// Record the resulting state so we can step back to it later
+				pushHistory();
 
 				if (stepMode) {
 					document.getElementById("run").disabled = false;
@@ -1304,14 +1441,17 @@
 			finalizeRun();
 		}
 
+		// Disable all control buttons (while a step/run is in progress)
+		function disableControls() {
+			['back', 'step', 'run', 'reset', 'clear', 'examples', 'save', 'load', 'share'].forEach(id => {
+				const el = document.getElementById(id);
+				if (el) el.disabled = true;
+			});
+		}
+
 		function run(step) {
-			document.getElementById("step").disabled = true;
-			document.getElementById("run").disabled = true;
-			document.getElementById("reset").disabled = true;
-			document.getElementById("clear").disabled = true;
-			document.getElementById("examples").disabled = true;
-			document.getElementById("save").disabled = true;
-			document.getElementById("load").disabled = true;
+			disableControls();
+			running = true;
 			stopRequested = false;
 			stepMode = step;
 			executeProgram();
@@ -1321,15 +1461,114 @@
 			run(false);
 		}
 
+		// NEXT ▶ : replay the next recorded state if we have stepped back,
+		// otherwise execute one new instruction at the tip of the history
 		function step() {
-			run(true);
+			if (histIndex < history.length - 1) {
+				redoStep();
+			} else {
+				run(true);
+			}
 		}
-	 
+
+		// ◀ BACK : restore the previous recorded state (no re-execution)
+		async function stepBack() {
+			if (histIndex <= 0) return;
+			disableControls();
+			running = true;
+			histIndex--;
+			await restoreState(history[histIndex]);
+			finalizeRun();
+		}
+
+		// Replay a state we previously stepped back from
+		async function redoStep() {
+			if (histIndex >= history.length - 1) return;
+			disableControls();
+			running = true;
+			histIndex++;
+			await restoreState(history[histIndex]);
+			finalizeRun();
+		}
+
 		function stop() {
 			stopRequested = true;
 		}
 
+		// ---- Machine-state history (for step back/forward) ----------------
+
+		// Capture the full machine state at an instruction boundary.
+		// `elevFloor` can be forced (e.g. for the initial state); otherwise it
+		// is read from the currently highlighted elevator floor.
+		function snapshot(elevFloor) {
+			const elevatorFloors = document.querySelectorAll('#elevatorTower .floor2');
+			let ef = (elevFloor !== undefined)
+				? elevFloor
+				: Array.from(elevatorFloors).findIndex(f => f.classList.contains('highlight2'));
+			if (ef < 0) ef = 1;
+			return {
+				pc, elevator, page,
+				input: input.slice(),
+				output: output.slice(),
+				data: Array.from(inputDatElements).map(el => el.value),
+				elevFloor: ef
+			};
+		}
+
+		// Push the current state onto the history (dropping any "redo" states
+		// and capping the total length)
+		function pushHistory() {
+			if (histIndex < history.length - 1) history = history.slice(0, histIndex + 1);
+			history.push(snapshot());
+			if (history.length > HISTORY_CAP) history.shift();
+			histIndex = history.length - 1;
+			updateStepButtons();
+		}
+
+		// Restore a recorded state and render it (gliding the elevator into place)
+		async function restoreState(s) {
+			pc = s.pc;
+			elevator = s.elevator;
+			page = s.page;
+			input = s.input.slice();
+			output = s.output.slice();
+			inputDatElements.forEach((el, i) => { el.value = (i < s.data.length) ? s.data[i] : ''; });
+			update();
+			setNarration(narrationForPc());
+			await moveElevator(s.elevFloor, '');
+			updateStepButtons();
+		}
+
+		// Seed the history with the current (just-reset) state
+		function initHistory() {
+			history = [snapshot(1)];
+			histIndex = 0;
+			updateStepButtons();
+		}
+
+		// Re-baseline the history after the program is edited
+		function invalidateHistory() {
+			history = [snapshot()];
+			histIndex = 0;
+			updateStepButtons();
+		}
+
+		// Preview the instruction the elevator will run next, for the narration bar
+		function narrationForPc() {
+			const code = getInsCode(pc);
+			if (!code) return 'Ready &ndash; press <strong>NEXT &#9654;</strong> to run the next instruction.';
+			return 'Next &rarr; ' + describeInstruction(code, pc);
+		}
+
+		// Enable/disable the BACK button depending on where we are in the history
+		// (always disabled while a run/step is in progress)
+		function updateStepButtons() {
+			const back = document.getElementById('back');
+			if (back) back.disabled = running || !(histIndex > 0);
+		}
+
 		function finalizeRun() {
+			running = false;
 			insOpSelects.forEach(sel => sel.disabled = false);
 			// Re-sync operand enabled/disabled state per operation
 			insOpSelects.forEach((sel, i) => onOpChange(sel, insOperandSelects[i]));
@@ -1339,18 +1578,36 @@
 			document.getElementById("reset").disabled = false;
 			document.getElementById("clear").disabled = false;
 			document.getElementById("examples").disabled = false;
+			document.getElementById("share").disabled = false;
 			if (document.getElementById("examples").value == "your") {
 				document.getElementById("save").disabled = false;
 				document.getElementById("load").disabled = false;
 			}
+			updateStepButtons();
 		}
 
 		createTowersElevator();
 		const insOpSelects = document.querySelectorAll('#instructionsTower .op-select');
 		const insOperandSelects = document.querySelectorAll('#instructionsTower .operand-select');
 		const inputDatElements = document.querySelectorAll('#dataTower input');
+
+		// Editing the program invalidates the step back/forward history
+		insOpSelects.forEach(sel => sel.addEventListener('change', invalidateHistory));
+		insOperandSelects.forEach(sel => sel.addEventListener('change', invalidateHistory));
+		inputDatElements.forEach(el => el.addEventListener('input', invalidateHistory));
+
 		moveElevator(1, "");
-		selectExample();
+
+		// If the URL carries a shared program (?p=...), load it; otherwise the example
+		const sharedProgram = getSharedProgram();
+		if (sharedProgram) {
+			document.getElementById('examples').value = 'your';
+			document.getElementById('save').disabled = false;
+			document.getElementById('load').disabled = false;
+			loadProgram(sharedProgram);
+		} else {
+			selectExample();
+		}
 
 	</script>
 	
