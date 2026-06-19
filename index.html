@@ -210,7 +210,9 @@
 		}
 		.op-select { flex: 1 1 auto; min-width: 0; font-weight: 600; }
 		.operand-select { flex: 0 0 46px; text-align: center; }
-		.operand-select:disabled { background: #f0f0f0; color: #b8b8b8; }
+		.operand-select:disabled { background: #f0f0f0; }
+		/* Keep disabled dropdowns readable (e.g. while a program is running) */
+		.op-select:disabled, .operand-select:disabled { color: #2b2b3a; opacity: 1; }
 		.op-mem  { background: var(--mem-bg);  border-color: var(--mem); }
 		.op-jump { background: var(--jump-bg); border-color: var(--jump); }
 		.op-io   { background: var(--io-bg);   border-color: var(--io); }
@@ -1006,7 +1008,7 @@
 			document.body.removeChild(a);
 		}
 
-		// Move elevator to instruction or data floor 
+		// Move elevator to instruction or data floor
 		async function moveElevator(floor, insdat) {
 			let elevatorFloors = document.querySelectorAll('#elevatorTower .floor2');
 			let currentPosition = Array.from(elevatorFloors).findIndex(floor => floor.classList.contains('highlight2'));
