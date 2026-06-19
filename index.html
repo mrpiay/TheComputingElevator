@@ -7,134 +7,234 @@
     <title>The Computing Elevator</title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
+        :root {
+            /* Friendly category colours (used for dropdowns + legend + tables) */
+            --mem:  #2f6fed;   --mem-bg:  #e6efff;
+            --jump: #e3791f;   --jump-bg: #ffeede;
+            --io:   #2e9e4f;   --io-bg:   #e3f6e8;
+            --adv:  #7a52c9;   --adv-bg:  #eee7fb;
+            --ink:  #2b2b3a;
+            --panel:#eef1f8;
+            --line: #c9cfdd;
         }
+        body {
+            font-family: 'Segoe UI', 'Trebuchet MS', Verdana, sans-serif;
+            text-align: center;
+            color: var(--ink);
+            background: #f5f7fb;
+            margin: 0;
+            padding: 0 0 40px;
+        }
+        h1 { margin: 18px auto 0; }
+        h3 { margin: 4px auto; font-weight: 500; color: #5a6072; }
         .container {
 			width: 80%;
 			margin: 0 auto;
 			display: flex;
             justify-content: center;
-			align-items: center; 	
+			align-items: stretch;
             gap: 0px;
         }
         .info {
 			width: 80%;
-			margin: 40px auto;
+			margin: 28px auto;
 			text-align: left;
 			line-height: 1.5;
+			background: #fff;
+			border: 1px solid var(--line);
+			border-radius: 14px;
+			box-shadow: 0 2px 8px rgba(40, 50, 80, 0.06);
+			padding: 22px 32px;
+			box-sizing: border-box;
         }
+		/* Neutral heading accent inside section cards */
+		.info h2 {
+			margin-top: 0;
+			padding-bottom: 8px;
+			border-bottom: 2px solid var(--line);
+		}
         .newinfo {
-			background-color: lightgray;
 			width: 80%;
-			margin: 40px auto;
+			margin: 28px auto;
 			text-align: left;
 			line-height: 1.5;
-			padding: 14px;
+			background: #fff;
+			border: 1px solid var(--line);
+			border-left: 5px solid #5a6072;
+			border-radius: 14px;
+			box-shadow: 0 2px 8px rgba(40, 50, 80, 0.06);
+			padding: 22px 32px;
+			box-sizing: border-box;
         }
 		.labels {
 			width: 30%;
-			background-color: lightgray;
+			background-color: #2a6b78;
+			color: #fff;
 			margin: 0 auto;
 			padding: 14px 0;
-			border-radius: 20px 20px 0 0;
+			border-radius: 16px 16px 0 0;
 			text-align: center;
 			font-weight: bold;
+			letter-spacing: 0.5px;
 		}
 		.author {
-			color: lightgray;
+			color: #c2c8d6;
+		}
+		/* Live plain-English narration of the running instruction */
+		.narration {
+			width: 80%;
+			box-sizing: border-box;
+			margin: 14px auto 0;
+			min-height: 22px;
+			padding: 12px 16px;
+			border-radius: 12px;
+			background: #e6e8ee;
+			border: 1px solid #cdd2de;
+			font-size: 16px;
+			color: #444b5e;
 		}
 		.buttons {
 			width: 80%;
-			background-color: lightgray;
-			margin: 0 auto;
-			padding: 14px 0;
-		}		
+			box-sizing: border-box;
+			background-color: #6aa7b3;
+			margin: 18px auto 0;
+			padding: 16px 10px;
+			border-radius: 12px;
+		}
+		.buttons button, .buttons select {
+			font-size: 14px;
+			padding: 6px 12px;
+			margin: 2px;
+			border-radius: 8px;
+			border: 1px solid var(--line);
+			background: #fff;
+			cursor: pointer;
+		}
+		.buttons button:hover:not(:disabled) { background: #f0f3fb; }
+		.buttons button:disabled { opacity: 0.5; cursor: default; }
 		.description {
 			display: inline-block;
-			background-color: white;
+			background-color: #fff;
 			color: black;
 			margin: 14px auto;
-			padding: 4px;
-			border-radius: 6px;			
-		}		
+			padding: 6px 12px;
+			border-radius: 8px;
+			border: 1px solid var(--line);
+		}
 		.tower {
             width: 30%;
-            border: 1px solid #000;
+            border-top: 1px solid var(--line);
             display: flex;
             flex-direction: column-reverse;
+            background: #fff;
         }
 		.numIns {
             width: 5%;
-            border: 1px solid #000;
-			border-left: none;
-            color: silver;
-			background-color: #FFF;
+            border-top: 1px solid var(--line);
+            color: #9aa2b5;
+			background-color: #fff;
             display: flex;
             flex-direction: column-reverse;
         }
         .elevator {
 			width: 30%;
-            border: 1px solid #FFF;
+            border-top: 1px solid transparent;
             display: flex;
             flex-direction: column-reverse;
         }
 		.numDat {
             width: 5%;
-            border: 1px solid #000;
-			border-right: none;
-            color: silver;
-            background-color: #FFF;
+            border-top: 1px solid var(--line);
+            color: #9aa2b5;
+            background-color: #fff;
             display: flex;
             flex-direction: column-reverse;
         }
         .floor {
             height: 50px;
-            border: 1px solid #000;
-            font-size: 14px;	
-			line-height: 0.8;
+            box-sizing: border-box;
+            border: 1px solid var(--line);
+            border-top: none;
+            font-size: 14px;
+			line-height: 0.9;
 			display: flex;
 			flex-direction: column;
-			justify-content: center; 			
-			align-items: center; 	
+			justify-content: center;
+			align-items: center;
         }
         .floor2 {
-            height: 50px; 
-            border: 1px solid #FFF;
+            height: 50px;
+            box-sizing: border-box;
+            border: 1px solid transparent;
+            border-top: none;
             font-size: 14px;
-			line-height: 0.8;
+			line-height: 0.9;
 			text-align: center;
 			display: flex;
 			flex-direction: column;
-			justify-content: center;        
+			justify-content: center;
 		}
         .highlight {
             color: black;
-			background-color: lightgray;
-			border: 1px solid black;
+			background-color: #ffe9a8;
+			border: 1px solid #d9a400;
         }
         .highlight2 {
             color: black;
-			background-color: lightgray;
-			border: 2px solid black;
+			background-color: #ffd34d;
+			border: 2px solid #c79100;
+			border-radius: 8px;
         }
+		/* Data floors keep numeric text inputs */
         input {
             width: 80%;
             height: 60%;
             text-align: center;
             font-size: 20px;
+			border: 1px solid var(--line);
+			border-radius: 6px;
         }
+		/* Two dropdowns per instruction floor: operation + floor number */
+		.instr-controls {
+			display: flex;
+			width: 92%;
+			gap: 4px;
+			justify-content: center;
+		}
+		.op-select, .operand-select {
+			height: 30px;
+			font-size: 13px;
+			border-radius: 6px;
+			border: 1px solid var(--line);
+			background: #fff;
+		}
+		.op-select { flex: 1 1 auto; min-width: 0; font-weight: 600; }
+		.operand-select { flex: 0 0 46px; text-align: center; }
+		.operand-select:disabled { background: #f0f0f0; color: #b8b8b8; }
+		.op-mem  { background: var(--mem-bg);  border-color: var(--mem); }
+		.op-jump { background: var(--jump-bg); border-color: var(--jump); }
+		.op-io   { background: var(--io-bg);   border-color: var(--io); }
+		.op-adv  { background: var(--adv-bg);  border-color: var(--adv); }
+		/* Instruction-set table category headers, colour-matched */
+		#instructionSet h3 { margin-top: 34px; margin-bottom: 10px; }
+		.cat-mem  { color: var(--mem);  border-left: 6px solid var(--mem);  padding-left: 8px; }
+		.cat-jump { color: var(--jump); border-left: 6px solid var(--jump); padding-left: 8px; }
+		.cat-io   { color: var(--io);   border-left: 6px solid var(--io);   padding-left: 8px; }
+		.cat-adv  { color: var(--adv);  border-left: 6px solid var(--adv);  padding-left: 8px; }
+		/* Mnemonic column in the Instruction Set tables, colour-matched to dropdowns */
+		#instructionSet td.mn { font-weight: 700; white-space: nowrap; color: #000; }
+		/* INPUT / OUTPUT floors at the bottom of each tower (grey text boxes on white) */
 		textarea {
             width: 80%;
             height: 60%;
 			resize: none;
-			border: 1px solid #000;
+			border: 1px solid #565d6a;
 			font-size: 14px;
 			line-height: 1.2;
 			padding: 4px;
-			background-color: black;
-			color: white;
+			background-color: #6b7280;
+			color: #ffffff;
+			border-radius: 6px;
 		}
     </style>
 
@@ -163,6 +263,9 @@
 		<div id="numDat" class="numDat"></div>
 		<div id="dataTower" class="tower"></div>
 	</div>
+
+	<!-- Live plain-English narration -->
+	<div id="narration" class="narration">Build a program with the dropdowns, then press <strong>STEP</strong> or <strong>RUN</strong>.</div>
 
     <!-- Buttons -->
     <div class="buttons">
@@ -207,27 +310,54 @@
 				The elevator displays the value of the <strong>accumulator</strong> register (ACC) as each instruction
 				is processed.
 			</li>
+		</ul>
+		<p>
+			<strong>How the elevator moves.</strong> The elevator carries out one instruction at a time, and where
+			it travels next depends on what that instruction does:
+		</p>
+		<ul>
 			<li>
-				Programs always start at instruction floor <strong>0</strong> and proceed <strong>sequentially</strong>
-				unless a jump instruction is found.
+				Programs always start at instruction floor <strong>0</strong>. The <strong>program counter</strong> (PC)
+				keeps track of which instruction floor to visit next, so normally the elevator moves <strong>up to the
+				next instruction floor</strong> in sequence.
 			</li>
 			<li>
-				The internal <strong>program counter</strong> (PC) is updated automatically 
-				and indicates the next instruction floor where the elevator will stop.
+				While carrying out an instruction the elevator may need a number from memory, so it
+				<strong>crosses over to that data floor</strong> in the data tower to read or store a value, then
+				returns to continue. (With <strong>indexed addressing</strong> &ndash; instructions in the format
+				<strong>7X</strong> &ndash; the data floor is worked out as <strong>X + Data[0]</strong>, where data
+				floor 0 acts as the <strong>index register</strong>; see Example 11.)
 			</li>
- 			<li>
-				In addition to <strong>direct addressing</strong> mode, where instructions directly reference
-				a specific data floor, <strong>indexed addressing</strong> is also supported.
-				Instructions in the format <strong>7X</strong> perform the same operation as instructions
-				in the format <strong>0X</strong>, but the data floor is calculated as <strong>X + Data[0]</strong>.
-				Data floor 0 acts as the <strong>index register</strong> (see Example 11).
+			<li>
+				A <strong>jump</strong> instruction changes the program counter, so the elevator does <strong>not</strong>
+				go to the next floor &ndash; it travels straight to the instruction floor named by the jump. A
+				<strong>conditional jump</strong> only does this if the elevator's value meets the condition (for example,
+				it is 0).
+			</li>
+			<li>
+				<strong>INPUT</strong> and <strong>OUTPUT</strong> take place on the special <strong>floor &minus;1</strong>
+				at the very bottom of each tower: the elevator drops down there to take a value from the user, or to send
+				the elevator's value to the output.
 			</li>
 		</ul>
 		<p>
-			The Computing Elevator supports instructions encoded with two denary digits, as defined in its <strong>Instruction Set</strong>,
-			emulating a machine code programming language. With only 10 instruction and data floors available by default,
-			it encourages users to get creative, designing their own problems and solving them efficiently, like generating
-			a full Fibonacci sequence in just 9 instructions (see Example 10).<p>
+			Computers don't understand words &ndash; every instruction has to be expressed as a <strong>code</strong>.
+			In the Computing Elevator each instruction is a <strong>two denary digit code</strong> (a simple kind of
+			<strong>machine code</strong>): the first digit chooses the <strong>operation</strong> and the second digit
+			chooses the <strong>floor</strong> it works on. For example, <strong>13</strong> means
+			"ADD the number on data floor 3".
+		</p>
+		<p>
+			Writing whole programs in numbers is hard to read, so instead we write our programs using
+			<strong>mnemonics</strong> &ndash; short, memorable words such as <strong>LOAD</strong>, <strong>ADD</strong>
+			and <strong>JUMP</strong> &ndash; chosen from the drop-down boxes on each floor. Each mnemonic stands for one of
+			the codes listed in the <strong>Instruction Set</strong> below, so as your program runs the elevator is still
+			carrying out the underlying machine code.
+		</p>
+		<p>
+			With only 10 instruction and data floors available by default, the Computing Elevator encourages users to get
+			creative, designing their own problems and solving them efficiently, like generating a full Fibonacci sequence
+			in just 9 instructions (see Example 10).
 		</p>
 		<p>
 			Users can design their own programs by entering instructions and data on the respective floors. 
@@ -269,108 +399,124 @@
 	<div class="info">
 		<div id="instructionSet">
 			<h2>Instruction Set</h2>
-			<h3>Memory & Arithmetic</h3>
+			<h3 class="cat-mem">Memory &amp; Arithmetic</h3>
 			<table border="1" cellspacing="0" cellpadding="6" style="width:100%; border-collapse: collapse;">
 				<thead style="background-color: lightgray;">
 					<tr>
-						<th style="width:5%">Code</th>
-						<th style="width:30%">Instruction</th>
+						<th style="width:14%">Mnemonic</th>
+						<th style="width:6%">Code</th>
+						<th style="width:28%">Instruction</th>
 						<th>Description</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
+						<td class="mn mn-mem">LOAD X</td>
 						<td>0X</td>
 						<td>ACC &larr; DATA[X]</td>
 						<td>Copy the value stored on data floor X into the elevator</td>
 					</tr>
 					<tr>
+						<td class="mn mn-mem">ADD X</td>
 						<td>1X</td>
 						<td>ACC &larr; ACC + DATA[X]</td>
 						<td>Add the value stored on data floor X to the elevator</td>
 					</tr>
 					<tr>
+						<td class="mn mn-mem">SUBTRACT X</td>
 						<td>2X</td>
 						<td>ACC &larr; ACC - DATA[X]</td>
 						<td>Subtract the value stored on data floor X from the elevator</td>
 					</tr>
 					<tr>
+						<td class="mn mn-mem">STORE X</td>
 						<td>3X</td>
 						<td>DATA[X] &larr; ACC</td>
 						<td>Copy the value from the elevator into data floor X</td>
 					</tr>
 					<tr>
+						<td class="mn mn-adv">LOAD INDEXED X</td>
 						<td>7X</td>
 						<td>ACC &larr; DATA[X + DATA[0]]</td>
 						<td>Copy the value stored on data floor (X + DATA[0]) into the elevator (indexed addressing)</td>
 					</tr>
 				</tbody>
 			</table>
-			<h3>Program Flow</h3>
+			<h3 class="cat-jump">Program Flow</h3>
 			<table border="1" cellspacing="0" cellpadding="6" style="width:100%; border-collapse: collapse;">
 				<thead style="background-color: lightgray;">
 					<tr>
-						<th style="width:5%">Code</th>
-						<th style="width:30%">Instruction</th>
+						<th style="width:14%">Mnemonic</th>
+						<th style="width:6%">Code</th>
+						<th style="width:28%">Instruction</th>
 						<th>Description</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
+						<td class="mn mn-jump">JUMP X</td>
 						<td>4X</td>
 						<td>PC &larr; X</td>
 						<td>Go to instruction floor X</td>
 					</tr>
 					<tr>
+						<td class="mn mn-jump">JUMP IF 0 X</td>
 						<td>5X</td>
 						<td>IF ACC &equals; 0 THEN PC &larr; X</td>
 						<td>If the elevator value is 0, go to instruction floor X</td>
 					</tr>
 					<tr>
+						<td class="mn mn-jump">JUMP IF &lt;0 X</td>
 						<td>6X</td>
 						<td>IF ACC &lt; 0 THEN PC &larr; X</td>
 						<td>If the elevator value is less than 0, go to instruction floor X</td>
 					</tr>
 				</tbody>
 			</table>
-			<h3>Input/Output</h3>
+			<h3 class="cat-io">Input/Output</h3>
 			<table border="1" cellspacing="0" cellpadding="6" style="width:100%; border-collapse: collapse;">
 				<thead style="background-color: lightgray;">
 					<tr>
-						<th style="width:5%">Code</th>
-						<th style="width:30%">Instruction</th>
+						<th style="width:14%">Mnemonic</th>
+						<th style="width:6%">Code</th>
+						<th style="width:28%">Instruction</th>
 						<th>Description</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
+						<td class="mn mn-io">INPUT</td>
 						<td>80</td>
 						<td>ACC &larr; INPUT</td>
 						<td>Copy the value entered by the user into the elevator</td>
 					</tr>
 					<tr>
+						<td class="mn mn-io">OUTPUT</td>
 						<td>81</td>
 						<td>OUTPUT &larr; ACC</td>
 						<td>Copy the value from the elevator into the output</td>
 					</tr>
 				</tbody>
 			</table>
-			<h3>Other</h3>
+			<h3 class="cat-adv">Other</h3>
 			<table border="1" cellspacing="0" cellpadding="6" style="width:100%; border-collapse: collapse;">
 				<thead style="background-color: lightgray;">
 					<tr>
-						<th style="width:5%">Code</th>
-						<th style="width:30%">Instruction</th>
+						<th style="width:14%">Mnemonic</th>
+						<th style="width:6%">Code</th>
+						<th style="width:28%">Instruction</th>
 						<th>Description</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
+						<td class="mn mn-io">STOP</td>
 						<td>82</td>
 						<td>STOP</td>
 						<td>Stop the program</td>
 					</tr>
 					<tr>
+						<td class="mn mn-adv">SET PAGE X</td>
 						<td>9X</td>
 						<td>SET PAGE TO X</td>
 						<td>Switch to block X</td>
@@ -517,6 +663,134 @@
 			}
 		}
 		
+		// ---- Mnemonic dropdown model -------------------------------------
+		// The UI uses plain-English mnemonics, but programs are still stored
+		// internally as 2-digit codes so examples and save/load stay compatible.
+		// Each operation knows its code, label, category (for colour) and
+		// whether it needs a floor-number operand.
+		const opGroups = [
+			{ label: 'Memory & maths', group: 'mem', items: [
+				['0', 'LOAD'], ['1', 'ADD'], ['2', 'SUBTRACT'], ['3', 'STORE'] ] },
+			{ label: 'Jumps', group: 'jump', items: [
+				['4', 'JUMP'], ['5', 'JUMP IF 0'], ['6', 'JUMP IF <0'] ] },
+			{ label: 'Input / output', group: 'io', items: [
+				['80', 'INPUT'], ['81', 'OUTPUT'], ['82', 'STOP'] ] },
+			{ label: 'Advanced', group: 'adv', items: [
+				['7', 'LOAD INDEXED'], ['9', 'SET PAGE'] ] },
+		];
+
+		// Build the operation dropdown for one floor
+		function buildOpSelect() {
+			const sel = document.createElement('select');
+			sel.className = 'op-select';
+			const blank = document.createElement('option');
+			blank.value = '';
+			blank.textContent = '—';
+			sel.appendChild(blank);
+			for (const g of opGroups) {
+				const optgroup = document.createElement('optgroup');
+				optgroup.label = g.label;
+				for (const [code, label] of g.items) {
+					const opt = document.createElement('option');
+					opt.value = code;
+					opt.textContent = label;
+					opt.dataset.group = g.group;
+					opt.dataset.operand = (code.length === 1) ? 'true' : 'false';
+					optgroup.appendChild(opt);
+				}
+				sel.appendChild(optgroup);
+			}
+			return sel;
+		}
+
+		// Build the floor-number dropdown (operand) for one floor
+		function buildOperandSelect() {
+			const sel = document.createElement('select');
+			sel.className = 'operand-select';
+			const blank = document.createElement('option');
+			blank.value = '';
+			blank.textContent = '–';
+			sel.appendChild(blank);
+			for (let n = 0; n < 10; n++) {
+				const opt = document.createElement('option');
+				opt.value = String(n);
+				opt.textContent = String(n);
+				sel.appendChild(opt);
+			}
+			return sel;
+		}
+
+		// Keep operand enabled/disabled + colour in sync with the chosen operation
+		function onOpChange(opSel, operandSel) {
+			const opt = opSel.options[opSel.selectedIndex];
+			const group = opt.dataset.group || '';
+			opSel.className = 'op-select' + (group ? ' op-' + group : '');
+			const hasOperand = opt.dataset.operand === 'true';
+			if (hasOperand) {
+				operandSel.disabled = false;
+				if (operandSel.value === '') operandSel.value = '0';
+			} else {
+				operandSel.disabled = true;
+				operandSel.value = '';
+			}
+		}
+
+		// Read the 2-digit code from a floor's two dropdowns ('' if empty)
+		function getInsCode(i) {
+			const op = insOpSelects[i].value;
+			if (op === '') return '';
+			if (op.length === 2) return op;            // 80 / 81 / 82
+			const operand = insOperandSelects[i].value;
+			return op + (operand === '' ? '0' : operand);
+		}
+
+		// Set a floor's two dropdowns from a 2-digit code ('' clears the floor)
+		function setInsCode(i, code) {
+			const opSel = insOpSelects[i];
+			const operandSel = insOperandSelects[i];
+			if (!code) {
+				opSel.value = '';
+				onOpChange(opSel, operandSel);
+				return;
+			}
+			if (code.length === 1) code = '0' + code;  // safety
+			if (code === '80' || code === '81' || code === '82') {
+				opSel.value = code;
+				onOpChange(opSel, operandSel);
+			} else {
+				opSel.value = code[0];
+				onOpChange(opSel, operandSel);
+				operandSel.value = code[1];
+			}
+		}
+
+		// Plain-English description of a 2-digit code, for the narration bar
+		function describeInstruction(code, floor) {
+			const x = code[1];
+			const where = `Floor ${floor}: `;
+			switch (code) {
+				case '80': return where + 'ask the user for an INPUT (0 or 1)';
+				case '81': return where + 'OUTPUT the number in the elevator';
+				case '82': return where + 'STOP the program';
+			}
+			switch (code[0]) {
+				case '0': return where + `LOAD the number on data floor ${x} into the elevator`;
+				case '1': return where + `ADD the number on data floor ${x} to the elevator`;
+				case '2': return where + `SUBTRACT the number on data floor ${x} from the elevator`;
+				case '3': return where + `STORE the elevator's number onto data floor ${x}`;
+				case '4': return where + `JUMP to instruction floor ${x}`;
+				case '5': return where + `if the elevator is 0, JUMP to instruction floor ${x}`;
+				case '6': return where + `if the elevator is below 0, JUMP to instruction floor ${x}`;
+				case '7': return where + `LOAD INDEXED: load data floor (${x} + index on floor 0)`;
+				case '9': return where + `SET PAGE to ${x}`;
+			}
+			return '';
+		}
+
+		function setNarration(html) {
+			document.getElementById('narration').innerHTML = html;
+		}
+
 		// Create towers + elevator
 		function createTowersElevator() {
 			// Get towers
@@ -534,12 +808,18 @@
 			inputFloor.appendChild(inputElement);
 			instructionsTower.appendChild(inputFloor);
 
-			// Create instruction floors
+			// Create instruction floors (mnemonic operation + floor-number dropdowns)
 			for (let i = 0; i < size; i++) {
 				const instructionFloor = document.createElement('div');
-				const inputElement = document.createElement('input');
 				instructionFloor.classList.add('floor');
-				instructionFloor.appendChild(inputElement);
+				const controls = document.createElement('div');
+				controls.className = 'instr-controls';
+				const opSel = buildOpSelect();
+				const operandSel = buildOperandSelect();
+				opSel.addEventListener('change', () => onOpChange(opSel, operandSel));
+				controls.appendChild(opSel);
+				controls.appendChild(operandSel);
+				instructionFloor.appendChild(controls);
 				instructionsTower.appendChild(instructionFloor);
 			}
 
@@ -590,9 +870,7 @@
 		
 		// Clear instructions and data
 		function clearInputs() {
-			inputInsElements.forEach(input => {
-				input.value = '';
-			});
+			insOpSelects.forEach((sel, i) => setInsCode(i, ''));
 
 			inputDatElements.forEach(input => {
 				input.value = '';
@@ -608,14 +886,15 @@
 			output = [];
 			document.getElementById('input').value = `INPUTS:\n`;
 			document.getElementById('output').value = `OUTPUTS:\n`;
+			setNarration('Build a program with the dropdowns, then press <strong>STEP</strong> or <strong>RUN</strong>.');
 			loadInsDat();
 		}
 
 		// Load instructions and data from program
 		function loadInsDat() {
-			// Update instruction inputs
-			inputInsElements.forEach((input, index) => {
-				input.value =  program.instructions[index] !== undefined ? program.instructions[index] : '';
+			// Update instruction dropdowns
+			insOpSelects.forEach((sel, index) => {
+				setInsCode(index, program.instructions[index] !== undefined ? program.instructions[index] : '');
 			});
 
 			// Update data inputs
@@ -690,7 +969,7 @@
 
 		// Save a program to file system
 		function save() {
-			const instructions = Array.from(inputInsElements).map(input => input.value);
+			const instructions = Array.from(insOpSelects).map((sel, i) => getInsCode(i));
 			const data = Array.from(inputDatElements).map(input => input.value);
 
 			let name = "";
@@ -818,26 +1097,13 @@
 		
 		// Execute program
 		async function executeProgram() {
-			// Disable inputs
-			inputInsElements.forEach(input => input.disabled = true);
+			// Disable inputs while running
+			insOpSelects.forEach(sel => sel.disabled = true);
+			insOperandSelects.forEach(sel => sel.disabled = true);
 			inputDatElements.forEach(input => input.disabled = true);
 
-			// Validate instructions and data
-			for (let i = 0; i < inputInsElements.length; i++) {
-				const val = inputInsElements[i].value;
-				if (
-					val === '' ||
-					/^[0-6][0-9]$/.test(val) ||
-					/^7[0-9]$/.test(val) ||
-					/^8[0-2]$/.test(val) ||
-					/^9[0-9]$/.test(val)
-				) continue;
-				else {
-					alert(`Invalid instruction on floor ${i}.`);
-					finalizeRun();
-					return;
-				}
-			}
+			// Data is still free-typed, so validate it (instructions come from
+			// dropdowns and are always valid by construction)
 			for (let i = 0; i < inputDatElements.length; i++) {
 				const val = inputDatElements[i].value;
 				if (val === '' || /^\d+$/.test(val)) continue;
@@ -849,7 +1115,7 @@
 			}
 
 			// Read instructions and data
-			instructions = Array.from(inputInsElements).map(input => input.value);
+			instructions = Array.from(insOpSelects).map((sel, i) => getInsCode(i));
 			data = Array.from(inputDatElements).map(input => Number(input.value));
 
 			stopRequested = false;
@@ -860,6 +1126,9 @@
 				const instr = instructions[pc];
 				const command = instr[0];
 				let operand = parseInt(instr[1]) + 10*page;
+
+				// Narrate the current instruction in plain English
+				if (instr) setNarration(describeInstruction(instr, pc));
 
 				// Send elevator to instruction floor
 				await moveElevator(pc + 1, "ins");
@@ -1059,7 +1328,9 @@
 		}
 
 		function finalizeRun() {
-			document.querySelectorAll('#instructionsTower input').forEach(input => input.disabled = false);
+			insOpSelects.forEach(sel => sel.disabled = false);
+			// Re-sync operand enabled/disabled state per operation
+			insOpSelects.forEach((sel, i) => onOpChange(sel, insOperandSelects[i]));
 			document.querySelectorAll('#dataTower input').forEach(input => input.disabled = false);
 			document.getElementById("step").disabled = false;
 			document.getElementById("run").disabled = false;
@@ -1073,7 +1344,8 @@
 		}
 
 		createTowersElevator();
-		const inputInsElements = document.querySelectorAll('#instructionsTower input');
+		const insOpSelects = document.querySelectorAll('#instructionsTower .op-select');
+		const insOperandSelects = document.querySelectorAll('#instructionsTower .operand-select');
 		const inputDatElements = document.querySelectorAll('#dataTower input');
 		moveElevator(1, "");
 		selectExample();
