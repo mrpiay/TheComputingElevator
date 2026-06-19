@@ -69,11 +69,11 @@ Programs are written using the **mnemonics** below, picked from the dropdown on 
 
 ### Program Flow
 
-| Mnemonic     | Code | Instruction              | Description                                                      |
-|--------------|------|--------------------------|------------------------------------------------------------------|
-| JUMP X       | 4X   | PC ← X                   | Go to instruction floor X                                        |
-| JUMP IF 0 X  | 5X   | IF ACC == 0 THEN PC ← X  | If the elevator value is 0, go to instruction floor X            |
-| JUMP IF <0 X | 6X   | IF ACC < 0 THEN PC ← X   | If the elevator value is less than 0, go to instruction floor X  |
+| Mnemonic          | Code | Instruction              | Description                                                      |
+|-------------------|------|--------------------------|------------------------------------------------------------------|
+| JUMP X            | 4X   | PC ← X                   | Go to instruction floor X                                        |
+| JUMP IF ACC = 0 X | 5X   | IF ACC == 0 THEN PC ← X  | If the elevator value is 0, go to instruction floor X            |
+| JUMP IF ACC < 0 X | 6X   | IF ACC < 0 THEN PC ← X   | If the elevator value is less than 0, go to instruction floor X  |
 
 ### Input/Output
 
