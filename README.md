@@ -23,6 +23,10 @@ Computers don't understand words — every instruction has to be expressed as a 
 
 Writing whole programs in numbers is hard to read, so instead we write our programs using **mnemonics** — short, memorable words such as **LOAD**, **ADD** and **JUMP** — chosen from the **drop-down boxes** on each instruction floor. Each mnemonic stands for one of the codes listed in the **Instruction Set** below, so as your program runs the elevator is still carrying out the underlying machine code.
 
+To see what that machine code looks like, tick the **Machine code** box in the control panel: the instruction floors switch between the mnemonic drop-downs and their raw **two-digit codes**. Both views edit the same program, so you can write in whichever you prefer and flip between them at any time.
+
+### Getting Creative
+
 With only 10 instruction and data floors available by default, the Computing Elevator encourages users to get creative, designing their own problems and solving them efficiently, like generating a full Fibonacci sequence in just 9 instructions (see Example 10).
 
 ### Running, Saving and Sharing
