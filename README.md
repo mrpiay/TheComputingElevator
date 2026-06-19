@@ -5,19 +5,31 @@ The simulator represents a minimal computer architecture illustrated as **twin t
 - A **program** consists of instructions and data written on the corresponding floors.
 - The **CPU** is visualized as an elevator moving between floors, following the **fetch-decode-execute** cycle.
 - The elevator displays the value of the **accumulator** register (ACC) as each instruction is processed.
-- Programs always start at instruction floor **0** and proceed **sequentially** unless a jump instruction is found.
-- The internal **program counter** (PC) is updated automatically and indicates the next instruction floor where the elevator will stop.
-- In addition to **direct addressing** mode, where instructions directly reference a specific data floor, **indexed addressing** is also supported. Instructions in the format **7X** perform the same operation as instructions in the format **0X**, but the data floor is calculated as **X + Data[0]**. Data floor 0 acts as the **index register** (see Example 11).
 
-The Computing Elevator supports instructions encoded with **two denary digits**, as defined in its **Instruction Set**, emulating a machine code programming language. With only 10 instruction and data floors available by default, it encourages users to get creative, designing their own problems and solving them efficiently, like generating a full Fibonacci sequence in just 9 instructions (see Example 10).
+## How the Elevator Moves
 
-Users can design their own programs by entering instructions and data on the respective floors. These programs can be **saved** to a JSON file and **loaded** later, facilitating sharing and experimentation.
+The elevator carries out one instruction at a time, and where it travels next depends on what that instruction does:
+
+- Programs always start at instruction floor **0**. The **program counter** (PC) keeps track of which instruction floor to visit next, so normally the elevator moves **up to the next instruction floor** in sequence.
+- While carrying out an instruction the elevator may need a number from memory, so it **crosses over to that data floor** in the data tower to read or store a value, then returns to continue. (With **indexed addressing** — instructions in the format **7X** — the data floor is worked out as **X + Data[0]**, where data floor 0 acts as the **index register**; see Example 11.)
+- A **jump** instruction changes the program counter, so the elevator does **not** go to the next floor — it travels straight to the instruction floor named by the jump. A **conditional jump** only does this if the elevator's value meets the condition (for example, it is 0).
+- **INPUT** and **OUTPUT** take place on the special **floor −1** at the very bottom of each tower: the elevator drops down there to take a value from the user, or to send the elevator's value to the output.
+
+## Code and Mnemonics
+
+Computers don't understand words — every instruction has to be expressed as a **code**. In the Computing Elevator each instruction is a **two denary digit code** (a simple kind of **machine code**): the first digit chooses the **operation** and the second digit chooses the **floor** it works on. For example, **13** means "ADD the number on data floor 3".
+
+Writing whole programs in numbers is hard to read, so instead we write our programs using **mnemonics** — short, memorable words such as **LOAD**, **ADD** and **JUMP** — chosen from the **drop-down boxes** on each instruction floor. Each mnemonic stands for one of the codes listed in the **Instruction Set** below, so as your program runs the elevator is still carrying out the underlying machine code.
+
+With only 10 instruction and data floors available by default, the Computing Elevator encourages users to get creative, designing their own problems and solving them efficiently, like generating a full Fibonacci sequence in just 9 instructions (see Example 10).
+
+Users can design their own programs by selecting instructions from the dropdowns and entering data on the respective floors. These programs can be **saved** to a JSON file and **loaded** later, facilitating sharing and experimentation.
 
 ## New Feature in v2.0
 
 The Computing Elevator **v2.0** introduces a new feature called **Paging**, which allows users to extend the addressable memory space beyond the initial 10 floors, enabling more complex and creative programming challenges.
 
-Paging divides the memory into multiple blocks or pages, **each containing 10 floors**. This feature is implemented through the **9X** instruction, which allows selecting the current page:
+Paging divides the memory into multiple blocks or pages, **each containing 10 floors**. This feature is implemented through the **9X** instruction (mnemonic **SET PAGE**), which allows selecting the current page:
 
 - **90**: Page 0 (floors 0-9)
 - **91**: Page 1 (floors 10-19)
@@ -30,37 +42,36 @@ To set the number of pages used in the simulator, add **?blocks=n** to the URL, 
 
 ## Instruction Set
 
-All instructions are **two digits** long for consistency.
+Programs are written using the **mnemonics** below, picked from the dropdown on each instruction floor (the operation, plus a floor number **X** where one is needed). Every mnemonic maps to a **two digit code** — the machine code the elevator actually runs.
 
 ### Memory & Arithmetic
 
-| Code | Instruction             | Description                                                                              |
-|------|-------------------------|------------------------------------------------------------------------------------------|
-| 0X   | ACC ← DATA[X]           | Copy the value stored on data floor X into the elevator                                  |
-| 1X   | ACC ← ACC + DATA[X]     | Add the value stored on data floor X to the elevator                                     |
-| 2X   | ACC ← ACC - DATA[X]     | Subtract the value stored on data floor X from the elevator                              |
-| 3X   | DATA[X] ← ACC           | Copy the value from the elevator into data floor X                                       |
-| 7X   | ACC ← DATA[X + DATA[0]] | Copy the value stored on data floor (X + DATA[0]) into the elevator (indexed addressing) |
+| Mnemonic       | Code | Instruction             | Description                                                                              |
+|----------------|------|-------------------------|------------------------------------------------------------------------------------------|
+| LOAD X         | 0X   | ACC ← DATA[X]           | Copy the value stored on data floor X into the elevator                                  |
+| ADD X          | 1X   | ACC ← ACC + DATA[X]     | Add the value stored on data floor X to the elevator                                     |
+| SUBTRACT X     | 2X   | ACC ← ACC - DATA[X]     | Subtract the value stored on data floor X from the elevator                              |
+| STORE X        | 3X   | DATA[X] ← ACC           | Copy the value from the elevator into data floor X                                       |
+| LOAD INDEXED X | 7X   | ACC ← DATA[X + DATA[0]] | Copy the value stored on data floor (X + DATA[0]) into the elevator (indexed addressing) |
 
 ### Program Flow
 
-| Code | Instruction              | Description                                                      |
-|------|--------------------------|------------------------------------------------------------------|
-| 4X   | PC ← X                   | Go to instruction floor X                                        |
-| 5X   | IF ACC == 0 THEN PC ← X  | If the elevator value is 0, go to instruction floor X            |
-| 6X   | IF ACC < 0 THEN PC ← X   | If the elevator value is less than 0, go to instruction floor X  |
+| Mnemonic     | Code | Instruction              | Description                                                      |
+|--------------|------|--------------------------|------------------------------------------------------------------|
+| JUMP X       | 4X   | PC ← X                   | Go to instruction floor X                                        |
+| JUMP IF 0 X  | 5X   | IF ACC == 0 THEN PC ← X  | If the elevator value is 0, go to instruction floor X            |
+| JUMP IF <0 X | 6X   | IF ACC < 0 THEN PC ← X   | If the elevator value is less than 0, go to instruction floor X  |
 
 ### Input/Output
 
-| Code | Instruction  | Description                                              |
-|------|--------------|----------------------------------------------------------|
-| 80   | ACC ← INPUT  | Copy the value entered by the user into the elevator     |
-| 81   | OUTPUT ← ACC | Copy the value from the elevator into the output         |
+| Mnemonic | Code | Instruction  | Description                                              |
+|----------|------|--------------|----------------------------------------------------------|
+| INPUT    | 80   | ACC ← INPUT  | Copy the value entered by the user into the elevator     |
+| OUTPUT   | 81   | OUTPUT ← ACC | Copy the value from the elevator into the output         |
 
 ### Other
 
-| Code | Instruction   | Description      |
-|------|---------------|------------------|
-| 82   | STOP         | Stop the program  |
-| 9X   | SET PAGE TO X | Switch to page X |
-
+| Mnemonic   | Code | Instruction   | Description       |
+|------------|------|---------------|-------------------|
+| STOP       | 82   | STOP          | Stop the program  |
+| SET PAGE X | 9X   | SET PAGE TO X | Switch to page X  |
