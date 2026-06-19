@@ -42,6 +42,16 @@ As a program runs, a narration bar describes the current instruction in plain En
 
 Programs can be **saved** to a JSON file and **loaded** later, or turned into a **shareable link** with the **SHARE** button: the program is encoded into the page URL and copied to the clipboard, so opening the link reproduces the program ready to run — ideal for sending a puzzle to a classmate.
 
+## New in v3.0
+
+Version 3.0 is a major redesign aimed at making the simulator clearer and more engaging:
+
+- **Mnemonics** — programs are written by choosing plain-English instructions (LOAD, ADD, JUMP…) from drop-down boxes, with a **Machine code** toggle to switch to the raw two-digit codes.
+- **Step back and forward** — run a program one instruction at a time and rewind to replay exactly what the elevator did.
+- **Live narration** — a bar describes each instruction in plain English as it runs.
+- **Shareable links** — turn any program into a link with the **SHARE** button to send a puzzle to a classmate.
+- **Refreshed design** — colour-coded instruction categories, clearer towers, and the elevator now shows the accumulator (ACC).
+
 ## New in v2.0: Paging
 
 The Computing Elevator **v2.0** introduces a new feature called **Paging**, which allows users to extend the addressable memory space beyond the initial 10 floors, enabling more complex and creative programming challenges.
