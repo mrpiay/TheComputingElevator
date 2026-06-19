@@ -23,7 +23,22 @@ Writing whole programs in numbers is hard to read, so instead we write our progr
 
 With only 10 instruction and data floors available by default, the Computing Elevator encourages users to get creative, designing their own problems and solving them efficiently, like generating a full Fibonacci sequence in just 9 instructions (see Example 10).
 
-Users can design their own programs by selecting instructions from the dropdowns and entering data on the respective floors. These programs can be **saved** to a JSON file and **loaded** later, facilitating sharing and experimentation.
+Users can design their own programs by selecting instructions from the dropdowns and typing data on the respective floors.
+
+## Running a Program
+
+There are several ways to run a program:
+
+- **RUN** executes the whole program automatically (use the speed selector for normal or top speed).
+- **NEXT ▶** runs a single instruction at a time, so you can follow the fetch-decode-execute cycle step by step.
+- **◀ BACK** rewinds one step, restoring the full machine state (program counter, accumulator, memory and outputs) so you can replay and review exactly what the elevator did. Stepping forward again replays the recorded states without re-prompting for input.
+- **STOP** halts a run, **RESET** returns to the start, and **CLEAR** empties every floor.
+
+As a program runs, a narration bar describes the current instruction in plain English (for example, "Floor 2: ADD the number on data floor 3 to the elevator").
+
+## Saving and Sharing
+
+Programs can be **saved** to a JSON file and **loaded** later. They can also be turned into a **shareable link** with the **SHARE** button: the program is encoded into the page URL (and copied to the clipboard), so opening the link reproduces the program ready to run — ideal for sending a puzzle to a classmate.
 
 ## New Feature in v2.0
 
